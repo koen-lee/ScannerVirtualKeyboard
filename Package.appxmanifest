@@ -17,7 +17,7 @@
 
   <Properties>
     <DisplayName>ScannerVirtualKeyboard</DisplayName>
-    <PublisherDisplayName>koen.lee</PublisherDisplayName>
+    <PublisherDisplayName>Koen van Leeuwen</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

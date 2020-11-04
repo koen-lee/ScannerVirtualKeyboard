@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Input.Preview.Injection;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,11 +56,13 @@ namespace ScannerVirtualKeyboard
 
                 Console.WriteLine("Found Barcode: " + text);
                 await Minimize();
+                Thread.Sleep(TimeSpan.FromMilliseconds(200));
                 InjectText(text);
-                Application.Current.Exit();
+                //Application.Exit() waits for the application to get focus again, so is unusable.
+                Process.GetCurrentProcess().Kill();
             }
         }
-
+        
         private void InjectText(string text)
         {
             foreach (var code in text.Select(GetCodeForChar))
