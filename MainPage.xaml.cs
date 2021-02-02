@@ -41,11 +41,21 @@ namespace ScannerVirtualKeyboard
             _scanner.BottomText = "Camera will automatically scan barcode\r\n\r\nPress the 'Back' button to Cancel";
             //Start scanning
             _scanner.AutoFocus();
-            _scanner.Scan().ContinueWith(t =>
+            _scanner.Scan(GetOptions()).ContinueWith(t =>
+              {
+                  if (t.Result != null)
+                      HandleScanResult(t.Result);
+              });
+        }
+
+        private static MobileBarcodeScanningOptions GetOptions()
+        {
+            return new MobileBarcodeScanningOptions
             {
-                if (t.Result != null)
-                    HandleScanResult(t.Result);
-            });
+                CameraResolutionSelector = resolutions => 
+                    resolutions.OrderBy(r=>Math.Abs(r.Width-640)).First(),
+                
+            };
         }
 
         async void HandleScanResult(ZXing.Result result)
@@ -62,7 +72,7 @@ namespace ScannerVirtualKeyboard
                 Process.GetCurrentProcess().Kill();
             }
         }
-        
+
         private void InjectText(string text)
         {
             foreach (var code in text.Select(GetCodeForChar))

@@ -11,7 +11,7 @@
   <Identity
     Name="Logiqs.ScannerVirtualKeyboard"
     Publisher="CN=koen.lee"
-    Version="1.0.0.0" />
+    Version="1.0.3.0" />
 
   <mp:PhoneIdentity PhoneProductId="26b75554-d347-488a-a071-05ef4056d255" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
