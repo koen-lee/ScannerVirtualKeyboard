@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
-using Windows.UI.Core;
 using Windows.UI.Input.Preview.Injection;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ZXing.Mobile;
@@ -41,20 +39,30 @@ namespace ScannerVirtualKeyboard
             _scanner.BottomText = "Camera will automatically scan barcode\r\n\r\nPress the 'Back' button to Cancel";
             //Start scanning
             _scanner.AutoFocus();
-            _scanner.Scan(GetOptions()).ContinueWith(t =>
-              {
-                  if (t.Result != null)
-                      HandleScanResult(t.Result);
-              });
+            Loaded += OnLoaded;
+        }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            await SwitchToCompact();
+            await _scanner.Scan(GetOptions()).ContinueWith(t => HandleScanResult(t.Result));
+        }
+
+
+        async Task SwitchToCompact()
+        {
+            var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+            preferences.CustomSize = new Windows.Foundation.Size(200, 200);
+            await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, preferences);
         }
 
         private static MobileBarcodeScanningOptions GetOptions()
         {
             return new MobileBarcodeScanningOptions
             {
-                CameraResolutionSelector = resolutions => 
-                    resolutions.OrderBy(r=>Math.Abs(r.Width-640)).First(),
-                
+                CameraResolutionSelector = resolutions =>
+                    resolutions.OrderBy(r => Math.Abs(r.Width - 640)).First(),
+
             };
         }
 
@@ -65,11 +73,8 @@ namespace ScannerVirtualKeyboard
                 var text = result.Text;
 
                 Console.WriteLine("Found Barcode: " + text);
-                await Minimize();
-                Thread.Sleep(TimeSpan.FromMilliseconds(200));
                 InjectText(text);
-                //Application.Exit() waits for the application to get focus again, so is unusable.
-                Process.GetCurrentProcess().Kill();
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
             }
         }
 
