@@ -36,7 +36,7 @@ namespace ScannerVirtualKeyboard
             _scanner.UseCustomOverlay = false;
             //We can customize the top and bottom text of our default overlay
             _scanner.TopText = "Hold camera up to barcode";
-            _scanner.BottomText = "Camera will automatically scan barcode\r\n\r\nPress the 'Back' button to Cancel";
+            _scanner.BottomText = "The code will be typed in the active app";
             //Start scanning
             _scanner.AutoFocus();
             Loaded += OnLoaded;
